@@ -1,0 +1,23 @@
+<% if @view_in_config && @erb_code %>
+  <%= render inline: @erb_code %>
+  
+<% else %>
+<h4><%=@title %></h4>
+
+<%= simple_form_for @requisition do |f| %>    
+
+  <%= f.input :project_id, :as => :hidden, :input_html => {:value => @project.id} %> 
+  <%= f.input :request_date, :label => t("Request Date"), :as => :string %> 
+  <%= f.input :purpose, :label => t("For Purpose") %> 
+  <%= f.input :field_changed, :as => :hidden %> 
+  <%= f.input :date_needed, :label => t("Date Needed"), :as => :string %> 
+  <%=t('Material Items')%>
+  <p><%= link_to_add_fields t("Add Items"), f, :material_items %></p>
+  <%= f.input :cost_total, :label => t('Cost Total($)')%> 
+  <%= f.input :brief_note, :label => t("Brief Note"), :input_html => {:rows => 2} %>
+  
+  <%= link_to t('Back'), SUBURI + "/authentify/view_handler?index=0", :class => BUTTONS_CLS['action'] %>
+  <%= f.button :submit, t('Save'), :class => BUTTONS_CLS['action'] %>  
+<% end %>
+
+<% end %>

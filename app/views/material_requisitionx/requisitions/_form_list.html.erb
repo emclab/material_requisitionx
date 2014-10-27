@@ -1,0 +1,62 @@
+<% if @view_in_config && @erb_code %>
+  <%= render inline: ERB.new(@erb_code).result(binding) %>
+  
+<% else %>
+
+<div class="pagination"><%= will_paginate models %></div>
+<h4><%=@title %></h>
+    <table class="table table-striped">
+		<tr>
+			<th><%= t('#') %></th>
+			<th><%= t('Project') %></th>	
+			<th><%= t('For Purpose') %></th>
+			<th><%= t('Request Date') %></th>
+			<th><%= t('Date Needed') %></th>
+			<th><%= t('Fulfilled') %></th>
+			<th><%= t('Fulfill Date') %></th>
+			<th><%= t('Requested By') %></th>
+			<th><%= t('Requisition State') %></th>
+			<th><%= t('Last Updated By') %></th>
+			<th></th>
+			<th></th>
+			<th></th>
+			
+			
+		</tr>
+		<% models.each do |r| %>
+		  <tr>
+		  	<% unless has_action_right?('show', params[:controller], r) %>
+		  	  <td><%= prt(r, :id) %></td>
+		  	<% else %>
+		  	  <td><%= link_to r.id.to_s, SUBURI + "/authentify/view_handler?index=1&url=#{requisition_path(r)}" %></td>
+		  	<% end %>
+		  	<td><%= prt(r, 'project.name') if r.project_id.present? %></td>
+			<td><%= prt(r, :purpose) %></td>
+			<td><%= r.request_date.strftime("%Y/%m/%d") %></td>
+		  	<td><%= r.date_needed.strftime("%Y/%m/%d") if r.date_needed.present? %></td>
+		  	<td><%= r.fulfilled ? t('Yes') : t('No') %></td>
+			<td><%= r.fulfill_date.strftime("%Y/%m/%d") if r.fulfill_date.present? %></td>
+		  	<td><%= prt(r, 'requested_by.name') %></td>
+			<td><%= t(prt(r, :wf_state).humanize.titleize) if r.wf_state.present? %></td>
+			<td><%= prt(r, 'last_updated_by.name') if r.last_updated_by_id.present? %></td>    
+			<td><%= link_to t('Submit Requisition'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_requisition_path(r, :wf_event => 'submit', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'initial_state' && has_action_right?('submit', params[:controller], r) %></td>
+			<td><%= link_to t('Manager ') + t('Approve'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_requisition_path(r, :wf_event => 'manager_approve', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'reviewing' && has_action_right?('manager_approve', params[:controller], r) %></td>
+			<td><%= link_to t('Manager ') + t('Reject'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_requisition_path(r, :wf_event => 'manager_reject', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'reviewing' && has_action_right?('manager_reject', params[:controller], r) %></td>
+			<td><%= link_to t('Fulfill'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_requisition_path(r, :wf_event => 'fulfill', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'approved' && has_action_right?('fulfill', params[:controller], r) %></td>
+			<td><%= link_to t('Edit'), SUBURI + "/authentify/view_handler?index=1&url=#{edit_requisition_path(r)}", :class => BUTTONS_CLS['action']  if has_action_right?('update', params[:controller], r) %></td>
+		  </tr>
+		<% end %>
+	</table>
+	
+	<table class="table table-striped">
+	  <tr>
+	    <th>
+	    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    	<%= link_to t('Back'), SUBURI + "/authentify/view_handler?index=0", :class => BUTTONS_CLS['action']  %>
+	    	<%= link_to t('New Requisition'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI::escape new_requisition_path(project_id: @project.id) }", :class => BUTTONS_CLS['action']  if @project && has_action_right?('create', params[:controller]) %>
+	    	<%= link_to t('Open Process'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI::escape list_open_process_requisitions_path }", :class => BUTTONS_CLS['action']  if has_action_right?('list_open_process', params[:controller]) %>
+	    </th>
+	  </tr>
+	</table>
+
+<% end %>	
