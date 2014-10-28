@@ -5,13 +5,34 @@ module MaterialRequisitionx
     include Workflow
     workflow_column :wf_state
     
-    attr_accessor :last_updated_by_name, :field_changed, :id_noupdate, :wf_comment, :wf_state_noupdate, :wf_event, :skip_wf_noupdate
+    workflow do
+      wf = Authentify::AuthentifyUtility.find_config_const('requisition_wf_pdef', 'material_requisitionx')
+      if Authentify::AuthentifyUtility.find_config_const('wf_pdef_in_config') == 'true' && wf.present?
+        eval(wf) 
+      elsif Rails.env.test?  
+        state :initial_state do
+          event :submit, :transitions_to => :reviewing
+        end
+        state :reviewing do
+          event :manager_approve, :transitions_to => :approved
+          event :manager_reject, :transitions_to => :rejected
+        end
+        state :approved do
+          event :fulfill, :transitions_to => :fulfilled
+        end
+        state :rejected
+        state :fulfilled
+        
+      end
+    end
+    
+    attr_accessor :last_updated_by_name, :field_changed, :id_noupdate, :wf_comment, :wf_state_noupdate, :wf_event, :skip_wf_noupdate, :fulfilled_by_name
     attr_accessible :fullfilled, :requisition_date, :last_updated_by_id, :project_id, :request_date, :requested_by_id, :skip_wf, :wf_state, :cost_total, :date_needed,
                     :purpose, :field_changed, :material_items_attributes, :approved, :approved_date, :approved_by_id, :fulfilled, :brief_note,
                     :as => :role_new
     attr_accessible :approved, :approved_by_id, :approved_date, :checkedout, :fulfill_date, :project_id, :request_date, :cost_total, :date_needed, :purpose, :brief_note,
                     :requested_by_id, :skip_wf, :wf_state, :field_changed, :material_items_attributes, :approved, :approved_date, :approved_by_id, :fulfilled,
-                    :id_noupdate, :wf_comment, :fulfilled_by_id,
+                    :id_noupdate, :wf_comment, :fulfilled_by_id, :fulfilled_by_name,
                     :as => :role_update
     
     attr_accessor :project_id_s, :start_date_s, :end_date_s, :approved_s, :requested_by_id_s, :time_frame_s, :purpose_s, :customer_id_s, :fulfilled, :product_name_s, 
@@ -46,26 +67,6 @@ module MaterialRequisitionx
         eval(wf) 
       end
     end
-
-    workflow do
-      wf = Authentify::AuthentifyUtility.find_config_const('requisition_wf_pdef', 'material_requisitionx')
-      if Authentify::AuthentifyUtility.find_config_const('wf_pdef_in_config') == 'true' && wf.present?
-        eval(wf) 
-      elsif Rails.env.test?  
-        state :initial_state do
-          event :submit, :transitions_to => :reviewing
-        end
-        state :reviewing do
-          event :manager_approve, :transitions_to => :approved
-          event :manager_reject, :transitions_to => :rejected
-        end
-        state :approved do
-          event :fulfill, :transitions_to => :fulfilled
-        end
-        state :rejected
-        state :fulfilled
-        
-      end
-    end
+   
   end
 end
