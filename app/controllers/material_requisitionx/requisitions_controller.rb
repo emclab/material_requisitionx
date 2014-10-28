@@ -30,7 +30,7 @@ module MaterialRequisitionx
         redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Saved!")
       else
         @erb_code = find_config_const('requisition_new_view', 'material_requisitionx')
-        @project = MaterialRequisitionx.project_class.find_by_id(MaterialRequisitionx::Requisition.find_by_id(params[:requisition][:project_id])) if params[:requisition].present? && params[:requisition][:project_id].present?
+        @project = MaterialRequisitionx.project_class.find_by_id(params[:requisition][:project_id]) if params[:requisition].present? && params[:requisition][:project_id].present?
         flash[:notice] = t('Data Error. Not Saved!')
         render 'new'
       end 
