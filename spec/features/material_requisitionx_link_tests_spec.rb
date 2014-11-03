@@ -47,7 +47,7 @@ describe "LinkTests" do
                                              <%= f.input :fulfilled_by_id, :as => :hidden, :input_html => {:value => session[:user_id]} %>
                                              <%= f.input :fulfilled, :as => :hidden, :input_html => {:value => true} %>
                                            ")
-      FactoryGirl.create(:engine_config, :engine_name => 'material_requisitionx', :engine_version => nil, :argument_name => 'validate_requisition_release', 
+      FactoryGirl.create(:engine_config, :engine_name => 'material_requisitionx', :engine_version => nil, :argument_name => 'validate_requisition_fulfill', 
                          :argument_value => "errors.add(:fulfill_date, I18n.t('Not be blank')) if fulfill_date.blank?
                                              errors.add(:fulfilled_by_id, I18n.t('Not be blank')) if fulfilled_by_id.blank?
                                            ")

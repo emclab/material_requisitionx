@@ -1,5 +1,7 @@
 MaterialRequisitionx::Engine.routes.draw do
-
+  
+  resources :material_items
+  
   resources :requisitions do
     
     workflow_routes = Authentify::AuthentifyUtility.find_config_const('requisition_wf_route', 'material_requisitionx')

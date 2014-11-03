@@ -67,8 +67,13 @@ module MaterialRequisitionx
     end
 
     def destroy
-      MaterialRequisitionx::Requisition.delete(params[:id].to_i)
-      redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Deleted!")
+      @requisition = MaterialRequisitionx::Requisition.find_by_id(params[:id])
+      if !@requisition.skip_wf && @requisition.wf_state.present? && @requisition.current_state != :initial_state
+        redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=NO Delete. Record Being Processed!")
+      else
+        @requisition.delete
+        redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Deleted!")
+      end
     end
     
     def list_open_process  

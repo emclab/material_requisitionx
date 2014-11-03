@@ -1,7 +1,6 @@
 module MaterialRequisitionx
   require 'workflow'
   class Requisition < ActiveRecord::Base
-    
     include Workflow
     workflow_column :wf_state
     
@@ -25,7 +24,7 @@ module MaterialRequisitionx
         
       end
     end
-    
+   
     attr_accessor :last_updated_by_name, :field_changed, :id_noupdate, :wf_comment, :wf_state_noupdate, :wf_event, :skip_wf_noupdate, :fulfilled_by_name
     attr_accessible :fullfilled, :requisition_date, :last_updated_by_id, :project_id, :request_date, :requested_by_id, :skip_wf, :wf_state, :cost_total, :date_needed,
                     :purpose, :field_changed, :material_items_attributes, :approved, :approved_date, :approved_by_id, :fulfilled, :brief_note,

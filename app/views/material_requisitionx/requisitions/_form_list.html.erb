@@ -43,6 +43,7 @@
 			<td><%= link_to t('Manager ') + t('Approve'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_requisition_path(r, :wf_event => 'manager_approve', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'reviewing' && has_action_right?('manager_approve', params[:controller], r) %></td>
 			<td><%= link_to t('Manager ') + t('Reject'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_requisition_path(r, :wf_event => 'manager_reject', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'reviewing' && has_action_right?('manager_reject', params[:controller], r) %></td>
 			<td><%= link_to t('Fulfill'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape event_action_requisition_path(r, :wf_event => 'fulfill', :resource_id => r.id)}", :class => BUTTONS_CLS['action']  if r.wf_state.present? && r.wf_state == 'approved' && has_action_right?('fulfill', params[:controller], r) %></td>
+			<td><%= link_to t('Checkout Items'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI.escape(material_items_path(requisition_id: r.id))}", :class => BUTTONS_CLS['action']  %></td>
 			<td><%= link_to t('Edit'), SUBURI + "/authentify/view_handler?index=1&url=#{edit_requisition_path(r)}", :class => BUTTONS_CLS['action']  if has_action_right?('update', params[:controller], r) %></td>
 		  </tr>
 		<% end %>

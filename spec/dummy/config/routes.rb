@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
 
-  get "user_menus/index"
-
   mount MaterialRequisitionx::Engine => "/material_requisitionx"
   mount Authentify::Engine => "/authentify"
   mount Commonx::Engine => "/commonx"
@@ -11,6 +9,7 @@ Rails.application.routes.draw do
   mount Kustomerx::Engine => '/customer'
   mount Supplierx::Engine => '/supplier'
   mount BaseMaterialx::Engine => '/base_material'
+  mount RequisitionCheckoutx::Engine => '/checkout'
   
   resource :session
   

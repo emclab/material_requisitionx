@@ -19,6 +19,7 @@ gem 'kustomerx', :path => '../kustomerx'
 gem 'petty_warehousex', :path => '../petty_warehousex'
 gem 'supplierx', :path => '../supplierx'
 gem 'base_materialx', :path =>  '../base_materialx'
+gem 'requisition_checkoutx', :path => '../requisition_checkoutx'
 
 # Declare any dependencies that are still in development here instead of in
 # your gemspec. These might include edge Rails or gems from your path or
