@@ -1,6 +1,6 @@
 MaterialRequisitionx::Engine.routes.draw do
   
-  resources :material_items
+  resources :material_items, only: [:index]
   
   resources :requisitions do
     
