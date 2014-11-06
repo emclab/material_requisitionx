@@ -10,7 +10,7 @@ module MaterialRequisitionx
       @material_items = params[:material_requisitionx_material_items][:model_ar_r]
       @material_items = @material_items.where(:requisition_id => @requisition.id) #@requisition has to be present
       @material_items = @material_items.page(params[:page]).per_page(@max_pagination)
-      @erb_code = find_config_const('material_item_index_view', 'material_material_itemx')
+      @erb_code = find_config_const('material_item_index_view', 'material_requisitionx')
     end
     protected
     def load_parent_record

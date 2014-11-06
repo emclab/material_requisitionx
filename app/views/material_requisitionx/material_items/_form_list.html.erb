@@ -9,24 +9,21 @@
 		<tr>
 			<th><%= t('Name') %></th>	
 			<th><%= t('Spec') %></th>
-			<th><%= t('Request Qty') %></th>
+			<th><%= t('Requisition Qty/Unit') %></th>
 			<th><%= t('Date Needed') %></th>
 			<th><%= t('Fulfilled Qty') %></th>
 			<th><%= t('Checkout Date') %></th>
 			<th><%= t('Checkout By') %></th>
 			<th><%= t('Brief Note') %></th>
 			<th></th>
-			<th></th>
-			<th></th>
-			
-			
+						
 		</tr>
 		<% models.each do |r| %>
 		  <tr>
 		  	<% checkouts = MaterialRequisitionx.checkout_class.where('requisition_id = ? AND item_id = ?', r.requisition.id, r.id) %>
 		  	<td><%= prt(r, :name) %></td>
 			<td><%= prt(r, :spec) %></td>
-			<td><%= prt(r, :qty) %></td>
+			<td><%= prt(r, :qty) %><%= prt(r, :unit) %></td>
 		  	<td><%= r.requisition.date_needed.strftime("%Y/%m/%d") if r.requisition.date_needed.present? %></td>
 		  	<td><%= checkouts.sum('checkout_qty') if checkouts %></td>
 		  	<td><%= checkouts.first.checkout_date.strftime("%Y/%m/%d") if checkouts && checkouts.first.present? && checkouts.first.checkout_date.present? %></td>
@@ -42,8 +39,6 @@
 	    <th>
 	    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	    	<%= link_to t('Back'), SUBURI + "/authentify/view_handler?index=0", :class => BUTTONS_CLS['action']  %>
-	    	<%= link_to t('New Requisition'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI::escape new_requisition_path(project_id: @project.id) }", :class => BUTTONS_CLS['action']  if @project && has_action_right?('create', params[:controller]) %>
-	    	<%= link_to t('Open Process'), SUBURI + "/authentify/view_handler?index=1&url=#{CGI::escape list_open_process_requisitions_path }", :class => BUTTONS_CLS['action']  if has_action_right?('list_open_process', params[:controller]) %>
 	    </th>
 	  </tr>
 	</table>

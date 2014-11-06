@@ -1,3 +1,7 @@
+<% if @view_in_config && @js_erb_code %>
+  <%= render inline: ERB.new(@js_erb_code).result(binding) %>
+  
+<% else %>
 <% if params[:requisition][:field_changed] == 'item_autocomplete' && @digi_keys.present? %>
   <% @auto_strings.each_with_index do |v, i| %>
     <% item = MaterialRequisitionx.item_class.find_by_name(v)%>
@@ -12,4 +16,6 @@
     <% end %> 
   <% end %>
   $('#requisition_field_changed').val('');
+<% end %>
+
 <% end %>

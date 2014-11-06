@@ -10,7 +10,7 @@
   <%= f.input :purpose, :label => t("For Purpose") %> 
   <%= f.input :field_changed, :as => :hidden %> 
   <%= f.input :date_needed, :label => t("Date Needed"), :as => :string %> 
-  <%=t('Material Items')%>
+  <b><%=t('Material Items')%></b>
   <p><%= link_to_add_fields t("Add Items"), f, :material_items %></p>
   <%= f.input :fulfilled, :label => t("Fulfilled"), :as => :boolean %>
   <%= f.input :fulfill_date, :label => t("Fulfill Date"), :as => :string %> 

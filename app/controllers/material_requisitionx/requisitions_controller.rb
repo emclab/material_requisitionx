@@ -6,7 +6,7 @@ module MaterialRequisitionx
     before_filter :load_parent_record
     
     def index
-      @title = t('Requisition Items')
+      @title = t('Requisitions')
       @requisitions = params[:material_requisitionx_requisitions][:model_ar_r]
       @requisitions = @requisitions.where(:project_id => @project.id) if @project
       @requisitions = @requisitions.where(:wf_state => params[:wf_state]) if params[:wf_state]
@@ -15,11 +15,13 @@ module MaterialRequisitionx
     end
   
     def new
-      @title = t('New Requisition Item')
+      @title = t('New Requisition')
       @requisition = MaterialRequisitionx::Requisition.new()
       @requisition.material_items.build
       return_callback_values()  #return @digi_keys[] and @quote_ids[]
       @erb_code = find_config_const('requisition_new_view', 'material_requisitionx')
+      @erb_code_field = find_config_const('requisition_new_view_field', 'material_requisitionx')
+      @js_erb_code = find_config_const('requisition_new_js_view', 'material_requisitionx')
     end
   
     def create
@@ -30,6 +32,8 @@ module MaterialRequisitionx
         redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Saved!")
       else
         @erb_code = find_config_const('requisition_new_view', 'material_requisitionx')
+        @erb_code_field = find_config_const('requisition_new_view_field', 'material_requisitionx')
+        @js_erb_code = find_config_const('requisition_new_js_view', 'material_requisitionx')
         @project = MaterialRequisitionx.project_class.find_by_id(params[:requisition][:project_id]) if params[:requisition].present? && params[:requisition][:project_id].present?
         flash[:notice] = t('Data Error. Not Saved!')
         render 'new'
@@ -37,10 +41,12 @@ module MaterialRequisitionx
     end
   
     def edit
-      @title = t('Update Requisition Item')
+      @title = t('Update Requisition')
       @requisition = MaterialRequisitionx::Requisition.find_by_id(params[:id])
       return_callback_values()  #return @digi_keys[] and @quote_ids[]
       @erb_code = find_config_const('requisition_edit_view', 'material_requisitionx')
+      @erb_code_field = find_config_const('requisition_edit_view_field', 'material_requisitionx')
+      @js_erb_code = find_config_const('requisition_edit_js_view', 'material_requisitionx')
       if !@requisition.skip_wf && @requisition.wf_state.present? && @requisition.current_state != :initial_state
         redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=NO Update. Record Being Processed!")
       end
@@ -54,6 +60,8 @@ module MaterialRequisitionx
           redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Updated!")
         else
           @erb_code = find_config_const('requisition_edit_view', 'material_requisitionx')
+          @erb_code_field = find_config_const('requisition_edit_view_field', 'material_requisitionx')
+          @js_erb_code = find_config_const('requisition_edit_js_view', 'material_requisitionx')
           flash[:notice] = t('Data Error. Not Updated!')
           render 'edit'
         end
@@ -61,7 +69,7 @@ module MaterialRequisitionx
     end
     
     def show
-      @title = t('Requisition Item Info')
+      @title = t('Requisition Info')
       @requisition = MaterialRequisitionx::Requisition.find_by_id(params[:id])
       @erb_code = find_config_const('requisition_show_view', 'material_requisitionx')
     end
