@@ -33,11 +33,6 @@ module MaterialRequisitionx
     #  c.should_not be_valid
     #end
     
-    it "should reject 0 item_id" do
-      c = FactoryGirl.build(:material_requisitionx_material_item, :item_id => 0)
-      c.should_not be_valid
-    end
-    
     it "should reject 0 out qty" do
       c = FactoryGirl.build(:material_requisitionx_material_item, :qty => 0)
       c.should_not be_valid

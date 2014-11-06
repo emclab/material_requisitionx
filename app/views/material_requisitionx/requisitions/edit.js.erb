@@ -1,20 +1,21 @@
-<% if params[:order][:field_changed] == 'quote_id' && @digi_keys.present? %>
-  <% @quote_ids.each_with_index do |v, i| %>
-    <% quote = PurchaseOrderx.quote_class.find_by_id(v)%>
-    <% if quote %>
-      $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_product_name').val("<%=quote.product_name%>");
-      $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_product_spec').val('<%=quote.product_spec%>');
-      $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_unit_price').val('<%=quote.unit_price%>');
-      $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_unit').val('<%=quote.unit%>');      
+<% if @view_in_config && @js_erb_code %>
+  <%= render inline: ERB.new(@js_erb_code).result(binding) %>
+  
+<% else %>
+<% if params[:requisition][:field_changed] == 'item_autocomplete' && @digi_keys.present? %>
+  <% @auto_strings.each_with_index do |v, i| %>
+    <% item = MaterialRequisitionx.item_class.find_by_name(v)%>
+    <% if item %>
+      $('#requisition_material_items_attributes_' + <%=@digi_keys[i]%> + '_item_id').val("<%=item.id %>");
+      $('#requisition_material_items_attributes_' + <%=@digi_keys[i]%> + '_spec').val('<%=item.spec%>');
+      $('#requisition_material_items_attributes_' + <%=@digi_keys[i]%> + '_unit').val('<%=item.unit%>');
     <% else %>
-      $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_product_name').val('');
-      $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_product_spec').val('');
-      $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_unit_price').val('');
-      $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_unit').val('');
+      $('#requisition_material_items_attributes_' + <%=@digi_keys[i]%> + '_item_id').val('');
+      $('#requisition_material_items_attributes_' + <%=@digi_keys[i]%> + '_spec').val('');
+      $('#requisition_material_items_attributes_' + <%=@digi_keys[i]%> + '_unit').val('');
     <% end %> 
-    $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_qty').val('');
-    $('#order_order_items_attributes_' + <%=@digi_keys[i]%> + '_item_note').val(''); 
-    $('#order_po_total').val('');  
   <% end %>
-  $('#order_field_changed').val('');
+  $('#requisition_field_changed').val('');
+<% end %>
+
 <% end %>

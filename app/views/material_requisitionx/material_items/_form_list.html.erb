@@ -1,0 +1,46 @@
+<% if @view_in_config && @erb_code %>
+  <%= render inline: ERB.new(@erb_code).result(binding) %>
+  
+<% else %>
+
+<div class="pagination"><%= will_paginate models %></div>
+<h4><%=@title %></h>
+    <table class="table table-striped">
+		<tr>
+			<th><%= t('Name') %></th>	
+			<th><%= t('Spec') %></th>
+			<th><%= t('Requisition Qty/Unit') %></th>
+			<th><%= t('Date Needed') %></th>
+			<th><%= t('Fulfilled Qty') %></th>
+			<th><%= t('Checkout Date') %></th>
+			<th><%= t('Checkout By') %></th>
+			<th><%= t('Brief Note') %></th>
+			<th></th>
+						
+		</tr>
+		<% models.each do |r| %>
+		  <tr>
+		  	<% checkouts = MaterialRequisitionx.checkout_class.where('requisition_id = ? AND item_id = ?', r.requisition.id, r.id) %>
+		  	<td><%= prt(r, :name) %></td>
+			<td><%= prt(r, :spec) %></td>
+			<td><%= prt(r, :qty) %><%= prt(r, :unit) %></td>
+		  	<td><%= r.requisition.date_needed.strftime("%Y/%m/%d") if r.requisition.date_needed.present? %></td>
+		  	<td><%= checkouts.sum('checkout_qty') if checkouts %></td>
+		  	<td><%= checkouts.first.checkout_date.strftime("%Y/%m/%d") if checkouts && checkouts.first.present? && checkouts.first.checkout_date.present? %></td>
+		  	<td><%= checkouts.first.checkout_by.name if checkouts && checkouts.first.present? && checkouts.first.checkout_by_id.present? %></td>
+			<td><%= prt(r, :brief_note) %></td>
+			<td><%= link_to t('Checkout Item'), SUBURI + "/authentify/view_handler?index=1&url=#{SUBURI + CGI.escape(requisition_checkoutx.new_checkout_path(:item_id => r.id, :whs_string => 'material_whs'))}", :class => BUTTONS_CLS['action']  %></td>
+		  </tr>
+		<% end %>
+	</table>
+	
+	<table class="table table-striped">
+	  <tr>
+	    <th>
+	    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    	<%= link_to t('Back'), SUBURI + "/authentify/view_handler?index=0", :class => BUTTONS_CLS['action']  %>
+	    </th>
+	  </tr>
+	</table>
+
+<% end %>	

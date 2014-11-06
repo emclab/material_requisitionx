@@ -24,9 +24,9 @@ module MaterialRequisitionx
         def checkout
           wf_common_action('approved', 'checkedout', 'checkout')
         end"
-      FactoryGirl.create(:engine_config, :engine_name => 'item_checkoutx', :engine_version => nil, :argument_name => 'checkout_wf_action_def', :argument_value => wf)
-      final_state = 'rejected, checkedout'
-      FactoryGirl.create(:engine_config, :engine_name => 'item_checkoutx', :engine_version => nil, :argument_name => 'checkout_wf_final_state_string', :argument_value => final_state)
+      FactoryGirl.create(:engine_config, :engine_name => 'material_requisitionx', :engine_version => nil, :argument_name => 'requisition_wf_action_def', :argument_value => wf)
+      final_state = 'rejected, fulfilled'
+      FactoryGirl.create(:engine_config, :engine_name => 'material_requisitionx', :engine_version => nil, :argument_name => 'requisition_wf_final_state_string', :argument_value => final_state)
       
       FactoryGirl.create(:engine_config, :engine_name => '', :engine_version => nil, :argument_name => 'wf_pdef_in_config', :argument_value => 'true')
       FactoryGirl.create(:engine_config, :engine_name => '', :engine_version => nil, :argument_name => 'wf_route_in_config', :argument_value => 'true')
@@ -43,7 +43,7 @@ module MaterialRequisitionx
       @u = FactoryGirl.create(:user, :user_levels => [ul], :user_roles => [ur])
       
       @i = FactoryGirl.create(:base_materialx_part)
-      @i1 = FactoryGirl.create(:base_materialx_part, :name => 'a new name')
+      @i1 = FactoryGirl.create(:base_materialx_part, :name => 'new name')
       @p = FactoryGirl.create(:ext_construction_projectx_project)
     end
     
@@ -55,8 +55,8 @@ module MaterialRequisitionx
         :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
-        qi1 = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i1.id, :name => 'a new name')
+        qi = FactoryGirl.build(:material_requisitionx_material_item, :name => @i.name, spec: @i.spec)
+        qi1 = FactoryGirl.build(:material_requisitionx_material_item, name: @i1.name, spec: @i1.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi])
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'rejected')
         q2 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1])
@@ -70,8 +70,8 @@ module MaterialRequisitionx
         :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
-        qi1 = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i1.id, :name => 'a new name')
+        qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
+        qi1 = FactoryGirl.build(:material_requisitionx_material_item, name: @i1.name, spec: @i1.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi])
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'approved')
         q2 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi])
@@ -85,8 +85,8 @@ module MaterialRequisitionx
                                          :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
-        qi1 = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i1.id, :name => 'a new name')
+        qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
+        qi1 = FactoryGirl.build(:material_requisitionx_material_item, name: @i1.name, spec: @i1.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi])
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'rejected')
         q2 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1])
@@ -100,8 +100,8 @@ module MaterialRequisitionx
         :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
-        qi1 = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i1.id, :name => 'a new name')
+        qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
+        qi1 = FactoryGirl.build(:material_requisitionx_material_item, name: @i1.name, spec: @i1.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi])
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'approved')
         q2 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1])
@@ -116,8 +116,8 @@ module MaterialRequisitionx
         :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
-        qi1 = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i1.id, :name => 'a new name')
+        qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
+        qi1 = FactoryGirl.build(:material_requisitionx_material_item, name: @i1.name, spec: @i1.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id)
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1], :project_id => q.project_id + 1)
         get 'index', {:use_route => :material_requisitionx, :project_id => @p.id}
@@ -142,7 +142,7 @@ module MaterialRequisitionx
         :sql_code => "")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.attributes_for(:material_requisitionx_material_item, :item_id => @i.id)
+        qi = FactoryGirl.attributes_for(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.attributes_for(:material_requisitionx_requisition, :project_id => @p.id, :material_items_attributes => [qi])
         get 'create', {:use_route => :material_requisitionx, :requisition => q, :project_id => @p.id}
         response.should redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Saved!")
@@ -153,7 +153,7 @@ module MaterialRequisitionx
         :sql_code => "")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.attributes_for(:material_requisitionx_material_item, :item_id => @i.id)
+        qi = FactoryGirl.attributes_for(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.attributes_for(:material_requisitionx_requisition, :material_items_attributes => [qi], :purpose => nil, :project_id => @p.id)
         get 'create', {:use_route => :material_requisitionx, :requisition => q, :project_id => @p.id}
         response.should render_template('new')
@@ -166,7 +166,7 @@ module MaterialRequisitionx
         :sql_code => "")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.create(:material_requisitionx_material_item, :item_id => @i.id)
+        qi = FactoryGirl.create(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id, :last_updated_by_id => @u.id)
         get 'edit', {:use_route => :material_requisitionx, :id => q.id}
         response.should be_success
@@ -179,7 +179,7 @@ module MaterialRequisitionx
         :sql_code => "")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
+        qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id, :last_updated_by_id => @u.id)
         get 'update', {:use_route => :material_requisitionx, :id => q.id, :Requisition => {:purpose => 'my up'}}
         response.should redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Updated!")
@@ -190,7 +190,7 @@ module MaterialRequisitionx
         :sql_code => "")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
+        qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :last_updated_by_id => @u.id)
         get 'update', {:use_route => :material_requisitionx, :id => q.id, :requisition => {:requested_by_id => 0}}
         response.should render_template('edit')
@@ -204,7 +204,7 @@ module MaterialRequisitionx
         :sql_code => "record.requested_by_id == session[:user_id]")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
+        qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id, :requested_by_id => @u.id, :last_updated_by_id => @u.id)
         get 'show', {:use_route => :material_requisitionx, :id => q.id }
         response.should be_success
@@ -217,7 +217,7 @@ module MaterialRequisitionx
         :sql_code => "")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
+        qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id, :last_updated_by_id => @u.id)
         get 'destroy', {:use_route => :material_requisitionx, :id => q.id}
         response.should redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Deleted!")

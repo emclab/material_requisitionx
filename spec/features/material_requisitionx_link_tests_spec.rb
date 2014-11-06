@@ -47,7 +47,7 @@ describe "LinkTests" do
                                              <%= f.input :fulfilled_by_id, :as => :hidden, :input_html => {:value => session[:user_id]} %>
                                              <%= f.input :fulfilled, :as => :hidden, :input_html => {:value => true} %>
                                            ")
-      FactoryGirl.create(:engine_config, :engine_name => 'material_requisitionx', :engine_version => nil, :argument_name => 'validate_requisition_release', 
+      FactoryGirl.create(:engine_config, :engine_name => 'material_requisitionx', :engine_version => nil, :argument_name => 'validate_requisition_fulfill', 
                          :argument_value => "errors.add(:fulfill_date, I18n.t('Not be blank')) if fulfill_date.blank?
                                              errors.add(:fulfilled_by_id, I18n.t('Not be blank')) if fulfilled_by_id.blank?
                                            ")
@@ -109,9 +109,9 @@ describe "LinkTests" do
       q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi])
       visit requisitions_path
       #save_and_open_page
-      page.should have_content('Requisition Items')
+      page.should have_content('Requisitions')
       click_link 'Edit'
-      page.should have_content('Update Requisition Item')
+      page.should have_content('Update Requisition')
       fill_in 'requisition_purpose', :with => '4001'
       click_button 'Save'
       #save_and_open_page
@@ -134,7 +134,7 @@ describe "LinkTests" do
       visit requisitions_path(:project_id => @p.id)
       #save_and_open_page
       click_link 'New Requisition'
-      page.should have_content('New Requisition Item')
+      page.should have_content('New Requisition')
       fill_in 'requisition_purpose', :with => '40004'
       fill_in 'requisition_request_date', :with => Date.today
       fill_in 'requisition_date_needed', :with => Date.today + 10.days
@@ -161,7 +161,7 @@ describe "LinkTests" do
       q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'approved')
       visit requisitions_path(:project_id => @p.id)  #allow to redirect after save new below
       page.should have_content('Approved')
-      page.should have_content('Requisition Items')
+      page.should have_content('Requisitions')
       click_link 'Fulfill'
       #fill_in 'requisition_fulfill_date', :with => Date.today - 8.days
       #save_and_open_page
