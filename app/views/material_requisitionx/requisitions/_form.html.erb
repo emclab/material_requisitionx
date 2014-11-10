@@ -11,6 +11,9 @@
   <%= f.input :field_changed, :as => :hidden %> 
   <%= f.input :date_needed, :label => t("Date Needed"), :as => :string %> 
   <b><%=t('Material Items')%></b>
+  <%= f.fields_for :material_items, @requisition.material_items do |builder| %>
+    <p><%= render('material_items', :f => builder)%></p>  
+  <% end %> 
   <p><%= link_to_add_fields t("Add Items"), f, :material_items %></p>
   <%= f.input :fulfilled, :label => t("Fulfilled"), :as => :boolean %>
   <%= f.input :fulfill_date, :label => t("Fulfill Date"), :as => :string %> 
