@@ -10,6 +10,7 @@ module MaterialRequisitionx
       @requisitions = params[:material_requisitionx_requisitions][:model_ar_r]
       @requisitions = @requisitions.where(:project_id => @project.id) if @project
       @requisitions = @requisitions.where(:wf_state => params[:wf_state]) if params[:wf_state]
+      @requisitions = @requisitions.where(:wf_state => params[:wf_state].split(',')) if params[:wf_state]
       @requisitions = @requisitions.page(params[:page]).per_page(@max_pagination)
       @erb_code = find_config_const('requisition_index_view', 'material_requisitionx')
     end
