@@ -5,6 +5,7 @@
 <div class="fields">
 	
   <%= f.input :item_name_autocomplete, :label => t("Item Name"), :input_html => { data: {autocomplete_source: SUBURI + base_materialx.autocomplete_parts_path}},:placeholder => t("Enter Part Name Keyword"), :required => true  %>
+  <%= f.input :name, :as => :hidden %>
   <%= f.input :spec, :label => t('Item Spec'), :readonly => true %>
   <%= f.input :unit, :label => t("Unit"), :readonly => true%> 
   <%= f.input :qty, :label => t("Requisition Qty") %>
