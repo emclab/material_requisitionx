@@ -30,6 +30,7 @@ module MaterialRequisitionx
       @requisition.last_updated_by_id = session[:user_id]
       @requisition.requested_by_id = session[:user_id]
       if @requisition.save 
+        @requisition.submit! if find_config_const('auto_submit', 'material_requisitionx') == 'true'
         redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Saved!")
       else
         @erb_code = find_config_const('requisition_new_view', 'material_requisitionx')

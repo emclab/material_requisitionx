@@ -111,6 +111,7 @@ describe "LinkTests" do
       #save_and_open_page
       page.should have_content('Requisitions')
       click_link 'Edit'
+      save_and_open_page
       page.should have_content('Update Requisition')
       fill_in 'requisition_purpose', :with => '4001'
       click_button 'Save'
@@ -217,6 +218,21 @@ describe "LinkTests" do
       click_button 'Save'
       visit list_items_requisitions_path(:wf_state => 'rejected')
       page.should have_content('Rejected')
+    end
+    
+    it "should auto submit if set so" do
+      FactoryGirl.create(:engine_config, :engine_name => 'material_requisitionx', :engine_version => nil, :argument_name => 'auto_submit', :argument_value => 'true')
+      visit requisitions_path(:project_id => @p.id)
+      #save_and_open_page
+      click_link 'New Requisition'
+      fill_in 'requisition_purpose', :with => '40004'
+      fill_in 'requisition_request_date', :with => Date.today
+      fill_in 'requisition_date_needed', :with => Date.today + 10.days
+      click_button 'Save'
+      #check
+      visit requisitions_path(:project_id => @p.id)
+      page.should have_content('Reviewing') 
+     
     end
   end
 end

@@ -21,8 +21,9 @@ class CreateExtConstructionProjectxProjects < ActiveRecord::Migration
       t.boolean :cancelled, :default => false
       t.integer :last_updated_by_id
       t.text :note
-
       t.timestamps
+      t.integer :sales_id
+      t.integer :project_coordinator_id
     end
     
     add_index :ext_construction_projectx_projects, :customer_id
@@ -32,5 +33,7 @@ class CreateExtConstructionProjectxProjects < ActiveRecord::Migration
     add_index :ext_construction_projectx_projects, :cancelled
     add_index :ext_construction_projectx_projects, :awarded
     add_index :ext_construction_projectx_projects, :name
+    add_index :ext_construction_projectx_projects, :sales_id
+    add_index :ext_construction_projectx_projects, :project_coordinator_id, :name => :ext_construction_projectx_coordinator
   end
 end

@@ -4,7 +4,7 @@ module MaterialRequisitionx
     attr_accessible :brief_note, :item_id, :qty, :unit, :requisition_id, :name, :spec, :item_name_autocomplete,
                     :unit_price, :stock_qty,
                     :as => :role_new
-    attr_accessible :brief_note, :item_name_autocomplete, :spec, :unit, :qty,
+    attr_accessible :brief_note, :item_name_autocomplete, :spec, :unit, :qty, :name,
                     :unit_price, :stock_qty,
                     :as => :role_update
     belongs_to :requisition, :class_name => 'MaterialRequisitionx::Requisition'
