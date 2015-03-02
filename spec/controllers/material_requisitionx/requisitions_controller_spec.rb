@@ -1,10 +1,11 @@
-require 'spec_helper'
+require 'rails_helper'
 
 module MaterialRequisitionx
-  describe RequisitionsController do
+  RSpec.describe RequisitionsController, type: :controller do
+    routes {MaterialRequisitionx::Engine.routes}
     before(:each) do
-      controller.should_receive(:require_signin)
-      controller.should_receive(:require_employee)
+      expect(controller).to receive(:require_signin)
+      expect(controller).to receive(:require_employee)
       
     end
     
@@ -52,7 +53,7 @@ module MaterialRequisitionx
     describe "GET 'index'" do
       it "returns all items" do
         user_access = FactoryGirl.create(:user_access, :action => 'index', :resource =>'material_requisitionx_requisitions', :role_definition_id => @role.id, :rank => 1,
-        :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
+        :sql_code => "MaterialRequisitionx::Requisition.all.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, :name => @i.name, spec: @i.spec)
@@ -61,13 +62,13 @@ module MaterialRequisitionx
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'rejected')
         q2 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1])
         q3 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1], :wf_state => 'approved')
-        get 'index', {:use_route => :material_requisitionx}
-        assigns(:requisitions).should =~ [q, q1, q2, q3]
+        get 'index'
+        expect(assigns(:requisitions)).to match_array([q, q1, q2, q3])
       end
 
       it "returns approved items" do
         user_access = FactoryGirl.create(:user_access, :action => 'index', :resource =>'material_requisitionx_requisitions', :role_definition_id => @role.id, :rank => 1,
-        :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
+        :sql_code => "MaterialRequisitionx::Requisition.all.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
@@ -76,13 +77,13 @@ module MaterialRequisitionx
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'approved')
         q2 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi])
         
-        get 'index', {:use_route => :material_requisitionx, :wf_state => 'approved'}
-        assigns(:requisitions).should =~ [q1]
+        get 'index', {:wf_state => 'approved'}
+        expect(assigns(:requisitions)).to match_array([q1])
       end
 
       it "returns rejected items" do
         user_access = FactoryGirl.create(:user_access, :action => 'index', :resource =>'material_requisitionx_requisitions', :role_definition_id => @role.id, :rank => 1,
-                                         :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
+                                         :sql_code => "MaterialRequisitionx::Requisition.all.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
@@ -91,13 +92,13 @@ module MaterialRequisitionx
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'rejected')
         q2 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1])
 
-        get 'index', {:use_route => :material_requisitionx, :wf_state => 'rejected'}
-        assigns(:requisitions).should =~ [q1]
+        get 'index', {:wf_state => 'rejected'}
+        expect(assigns(:requisitions)).to match_array([q1])
       end
 
       it "returns checkedout items" do
         user_access = FactoryGirl.create(:user_access, :action => 'index', :resource =>'material_requisitionx_requisitions', :role_definition_id => @role.id, :rank => 1,
-        :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
+        :sql_code => "MaterialRequisitionx::Requisition.all.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
@@ -106,22 +107,22 @@ module MaterialRequisitionx
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'approved')
         q2 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1])
         
-        get 'index', {:use_route => :material_requisitionx, :wf_state => 'approved'}
-        assigns(:requisitions).should =~ [q1]
+        get 'index', {:wf_state => 'approved'}
+        expect(assigns(:requisitions)).to match_array([q1])
       end
 
       
       it "should only return the requisitions for the project" do
         user_access = FactoryGirl.create(:user_access, :action => 'index', :resource =>'material_requisitionx_requisitions', :role_definition_id => @role.id, :rank => 1,
-        :sql_code => "MaterialRequisitionx::Requisition.scoped.order('created_at DESC')")
+        :sql_code => "MaterialRequisitionx::Requisition.all.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         qi1 = FactoryGirl.build(:material_requisitionx_material_item, name: @i1.name, spec: @i1.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id)
         q1 = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi1], :project_id => q.project_id + 1)
-        get 'index', {:use_route => :material_requisitionx, :project_id => @p.id}
-        assigns(:requisitions).should =~ [q]
+        get 'index', {:project_id => @p.id}
+        expect(assigns(:requisitions)).to match_array([q])
       end
     end
   
@@ -131,8 +132,8 @@ module MaterialRequisitionx
         :sql_code => "")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
-        get 'new', {:use_route => :material_requisitionx, :project_id => @p.id}
-        response.should be_success
+        get 'new', {:project_id => @p.id}
+        expect(response).to  be_success
       end
     end
   
@@ -144,8 +145,8 @@ module MaterialRequisitionx
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.attributes_for(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.attributes_for(:material_requisitionx_requisition, :project_id => @p.id, :material_items_attributes => [qi])
-        get 'create', {:use_route => :material_requisitionx, :requisition => q, :project_id => @p.id}
-        response.should redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Saved!")
+        get 'create', {:requisition => q, :project_id => @p.id}
+        expect(response).to  redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Saved!")
       end
       
       it "should render new with data error" do
@@ -155,8 +156,8 @@ module MaterialRequisitionx
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.attributes_for(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.attributes_for(:material_requisitionx_requisition, :material_items_attributes => [qi], :purpose => nil, :project_id => @p.id)
-        get 'create', {:use_route => :material_requisitionx, :requisition => q, :project_id => @p.id}
-        response.should render_template('new')
+        get 'create', {:requisition => q, :project_id => @p.id}
+        expect(response).to  render_template('new')
       end
     end
   
@@ -168,8 +169,8 @@ module MaterialRequisitionx
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.create(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id, :last_updated_by_id => @u.id)
-        get 'edit', {:use_route => :material_requisitionx, :id => q.id}
-        response.should be_success
+        get 'edit', {:id => q.id}
+        expect(response).to  be_success
       end
     end
   
@@ -181,8 +182,8 @@ module MaterialRequisitionx
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id, :last_updated_by_id => @u.id)
-        get 'update', {:use_route => :material_requisitionx, :id => q.id, :Requisition => {:purpose => 'my up'}}
-        response.should redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Updated!")
+        get 'update', {:id => q.id, :Requisition => {:purpose => 'my up'}}
+        expect(response).to  redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Updated!")
       end
       
       it "should render edit with data error" do
@@ -192,8 +193,8 @@ module MaterialRequisitionx
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :last_updated_by_id => @u.id)
-        get 'update', {:use_route => :material_requisitionx, :id => q.id, :requisition => {:requested_by_id => 0}}
-        response.should render_template('edit')
+        get 'update', {:id => q.id, :requisition => {:requested_by_id => 0}}
+        expect(response).to  render_template('edit')
       end
       
     end
@@ -206,8 +207,8 @@ module MaterialRequisitionx
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id, :requested_by_id => @u.id, :last_updated_by_id => @u.id)
-        get 'show', {:use_route => :material_requisitionx, :id => q.id }
-        response.should be_success
+        get 'show', {:id => q.id }
+        expect(response).to  be_success
       end
     end
     
@@ -219,8 +220,8 @@ module MaterialRequisitionx
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item, name: @i.name, spec: @i.spec)
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :project_id => @p.id, :last_updated_by_id => @u.id)
-        get 'destroy', {:use_route => :material_requisitionx, :id => q.id}
-        response.should redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Deleted!")
+        get 'destroy', {:id => q.id}
+        expect(response).to  redirect_to URI.escape(SUBURI + "/authentify/view_handler?index=0&msg=Successfully Deleted!")
       end
   end
 end

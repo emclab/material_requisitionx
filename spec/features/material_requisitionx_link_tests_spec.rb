@@ -1,6 +1,6 @@
-require 'spec_helper'
+require 'rails_helper'
 
-describe "LinkTests" do
+RSpec.describe "LinkTests", type: :request do
   describe "GET /material_requisitionx_link_tests" do
     mini_btn = 'btn btn-mini '
     ActionView::CompiledTemplates::BUTTONS_CLS =
@@ -107,45 +107,45 @@ describe "LinkTests" do
     it "works! (now write some real specs)" do
       qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
       q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi])
-      visit requisitions_path
+      visit material_requisitionx.requisitions_path
       #save_and_open_page
-      page.should have_content('Requisitions')
+      expect(page).to have_content('Requisitions')
       click_link 'Edit'
       save_and_open_page
-      page.should have_content('Update Requisition')
+      expect(page).to have_content('Update Requisition')
       fill_in 'requisition_purpose', :with => '4001'
       click_button 'Save'
       #save_and_open_page
 
       # submit for manager review
-      visit requisitions_path
+      visit material_requisitionx.requisitions_path
       #save_and_open_page
       click_link 'Submit Requisition'
       #save_and_open_page
-      visit requisitions_path
-      page.should have_content('4001')
+      visit material_requisitionx.requisitions_path
+      expect(page).to have_content('4001')
 
       #bad data
-      visit requisitions_path
+      visit material_requisitionx.requisitions_path
       click_link 'Edit'
       fill_in 'requisition_purpose', :with => nil
       click_button 'Save'
       #save_and_open_page
 
-      visit requisitions_path(:project_id => @p.id)
+      visit material_requisitionx.requisitions_path(:project_id => @p.id)
       #save_and_open_page
       click_link 'New Requisition'
-      page.should have_content('New Requisition')
+      expect(page).to have_content('New Requisition')
       fill_in 'requisition_purpose', :with => '40004'
       fill_in 'requisition_request_date', :with => Date.today
       fill_in 'requisition_date_needed', :with => Date.today + 10.days
       click_button 'Save'
       #
-      visit requisitions_path
-      page.should have_content('40004')
+      visit material_requisitionx.requisitions_path
+      expect(page).to have_content('40004')
       #save_and_open_page
       #bad data
-      visit requisitions_path(:project_id => @p.id)
+      visit material_requisitionx.requisitions_path(:project_id => @p.id)
       #save_and_open_page
       click_link 'New Requisition'
       fill_in 'requisition_purpose', :with => 'bad new requisition'
@@ -153,76 +153,76 @@ describe "LinkTests" do
       fill_in 'requisition_date_needed', :with => Date.today + 10.days
       click_button 'Save'
       #save_and_open_page
-      visit requisitions_path
-      page.should_not have_content('bad new requisition')
+      visit material_requisitionx.requisitions_path
+      expect(page).to_not have_content('bad new requisition')
     end
 
     it "should requisition an approved item" do
       qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
       q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'approved')
-      visit requisitions_path(:project_id => @p.id)  #allow to redirect after save new below
-      page.should have_content('Approved')
-      page.should have_content('Requisitions')
+      visit material_requisitionx.requisitions_path(:project_id => @p.id)  #allow to redirect after save new below
+      expect(page).to have_content('Approved')
+      expect(page).to have_content('Requisitions')
       click_link 'Fulfill'
       #fill_in 'requisition_fulfill_date', :with => Date.today - 8.days
       #save_and_open_page
       click_button 'Save'
-      visit requisitions_path()
+      visit material_requisitionx.requisitions_path()
       #save_and_open_page
-      page.should have_content('Fulfilled')
+      expect(page).to have_content('Fulfilled')
 
     end
     
     it "requisition from submit request to final requisition" do
       qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
       q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'initial_state')
-      visit requisitions_path
-      page.should have_content('Submit Requisition')
+      visit material_requisitionx.requisitions_path
+      expect(page).to have_content('Submit Requisition')
       click_link 'Submit Requisition'
       fill_in 'requisition_wf_comment', :with => 'Submitting Requisition'
       click_button 'Save'
-      visit requisitions_path
+      visit material_requisitionx.requisitions_path
       #save_and_open_page
 
-      page.should have_content('Reviewing')
+      expect(page).to have_content('Reviewing')
       click_link 'Manager Approve'
       fill_in 'requisition_wf_comment', :with => 'Approving requisition'
       click_button 'Save'
-      visit requisitions_path
+      visit material_requisitionx.requisitions_path
       #save_and_open_page
 
-      page.should have_content('Approved')
+      expect(page).to have_content('Approved')
       click_link 'Fulfill'
       fill_in 'requisition_wf_comment', :with => 'Checking requisition'
       click_button 'Save'
-      visit requisitions_path
+      visit material_requisitionx.requisitions_path
       #save_and_open_page
-      page.should have_content('Fulfilled')
+      expect(page).to have_content('Fulfilled')
     end
 
     it "list submitted request then reviewing requests, then rejected requests" do
       qi = FactoryGirl.build(:material_requisitionx_material_item, :item_id => @i.id)
       q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi], :wf_state => 'initial_state')
-      visit list_items_requisitions_path(:wf_state => 'initial_state')
-      page.should have_content('Submit Requisition')
+      visit material_requisitionx.list_items_requisitions_path(:wf_state => 'initial_state')
+      expect(page).to have_content('Submit Requisition')
       click_link 'Submit Requisition'
       fill_in 'requisition_wf_comment', :with => 'Submitting requisition'
       click_button 'Save'
 
-      visit list_items_requisitions_path(:wf_state => 'reviewing')
+      visit material_requisitionx.list_items_requisitions_path(:wf_state => 'reviewing')
       #save_and_open_page
-      page.should have_content('Reviewing')
+      expect(page).to have_content('Reviewing')
 
       click_link 'Manager Reject'
       fill_in 'requisition_wf_comment', :with => 'Rejecting requisition'
       click_button 'Save'
-      visit list_items_requisitions_path(:wf_state => 'rejected')
-      page.should have_content('Rejected')
+      visit material_requisitionx.list_items_requisitions_path(:wf_state => 'rejected')
+      expect(page).to have_content('Rejected')
     end
     
     it "should auto submit if set so" do
       FactoryGirl.create(:engine_config, :engine_name => 'material_requisitionx', :engine_version => nil, :argument_name => 'auto_submit', :argument_value => 'true')
-      visit requisitions_path(:project_id => @p.id)
+      visit material_requisitionx.requisitions_path(:project_id => @p.id)
       #save_and_open_page
       click_link 'New Requisition'
       fill_in 'requisition_purpose', :with => '40004'
@@ -230,8 +230,8 @@ describe "LinkTests" do
       fill_in 'requisition_date_needed', :with => Date.today + 10.days
       click_button 'Save'
       #check
-      visit requisitions_path(:project_id => @p.id)
-      page.should have_content('Reviewing') 
+      visit material_requisitionx.requisitions_path(:project_id => @p.id)
+      expect(page).to have_content('Reviewing') 
      
     end
   end

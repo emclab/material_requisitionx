@@ -10,10 +10,10 @@ MaterialRequisitionx::Engine.routes.draw do
     elsif Rails.env.test?
       member do
         get :event_action
-        put :submit
-        put :manager_approve
-        put :manager_reject
-        put :fulfill
+        patch :submit
+        patch :manager_approve
+        patch :manager_reject
+        patch :fulfill
       end
       
       collection do

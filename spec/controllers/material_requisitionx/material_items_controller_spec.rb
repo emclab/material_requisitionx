@@ -1,10 +1,11 @@
-require 'spec_helper'
+require 'rails_helper'
 
 module MaterialRequisitionx
-  describe MaterialItemsController do
+  RSpec.describe MaterialItemsController, type: :controller do
+    routes {MaterialRequisitionx::Engine.routes}
     before(:each) do
-      controller.should_receive(:require_signin)
-      controller.should_receive(:require_employee)
+      expect(controller).to receive(:require_signin)
+      expect(controller).to receive(:require_employee)
       
     end
     before(:each) do
@@ -26,14 +27,14 @@ module MaterialRequisitionx
     describe "GET 'index'" do
       it "returns http success" do
         user_access = FactoryGirl.create(:user_access, :action => 'index', :resource =>'material_requisitionx_material_items', :role_definition_id => @role.id, :rank => 1,
-        :sql_code => "MaterialRequisitionx::MaterialItem.scoped.order('created_at DESC')")
+        :sql_code => "MaterialRequisitionx::MaterialItem.all.order('created_at DESC')")
         session[:user_id] = @u.id
         session[:user_privilege] = Authentify::UserPrivilegeHelper::UserPrivilege.new(@u.id)
         qi = FactoryGirl.build(:material_requisitionx_material_item)
         qi1 = FactoryGirl.build(:material_requisitionx_material_item, :name => 'a new name')
         q = FactoryGirl.create(:material_requisitionx_requisition, :material_items => [qi, qi1])
-        get 'index', {:use_route => :material_requisitionx, :requisition_id => q.id}
-        assigns(:material_items).should =~ [qi, qi1]
+        get 'index', {:requisition_id => q.id}
+        expect(assigns(:material_items)).to match_array([qi, qi1])
       end
     end
   
